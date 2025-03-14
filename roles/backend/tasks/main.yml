@@ -1,0 +1,47 @@
+- name: Disable nodejs and enable nodejs20
+  ansible.builtin.shell: dnf module disable nodejs -y && dnf module enable nodejs:20 -y
+
+- name: Install nodejs
+  ansible.builtin.dnf:
+    name: nodejs
+    state: latest
+
+- name: Add the user expense
+  ansible.builtin.user:
+    name: expense
+
+
+- name: Create a directory /app
+  ansible.builtin.file:
+    path: /app
+    state: directory
+
+
+- name: download and unzip code
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: pre-req
+
+- name: npm install
+  community.general.npm:
+    path: /app
+    state: latest
+
+- name: Copy expense nginx config file
+  ansible.builtin.copy:
+    src: backend.service
+    dest: /etc/systemd/system/backend.service
+
+- name: Install mysql client
+  ansible.builtin.dnf:
+    name: mysql
+    state: latest
+
+- name: Change MySQL Password
+  ansible.builtin.shell: mysql -h 172.31.86.12 -uroot -pExpenseApp@1 < /app/schema/backend.sql
+
+- name: Enable backend
+  ansible.builtin.systemd_service:
+    name: backend
+    state: restarted
+    enabled: true
