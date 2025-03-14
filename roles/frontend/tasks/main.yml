@@ -5,12 +5,12 @@
 
 - name: Remove default html
   ansible.builtin.file:
-    path: /usr/share/nginx/html/*
+    path: /usr/share/nginx/html/*`
     state: absent
 
 - name: Downlaod and unarchive file
   ansible.builtin.unarchive:
-    src: https://expense-artifacts.s3.amazonaws.com/expense-frontend-v2.zip
+    src: https://expense-artifacts.s3.amazonaws.com/expense-{{component}}-v2.zip
     dest: /usr/share/nginx/html
     remote_src: yes
 
