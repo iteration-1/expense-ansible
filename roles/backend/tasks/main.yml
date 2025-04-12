@@ -39,6 +39,10 @@
 #    - cryptography
 #    executable: pip3.9
 
+- name: Install PyMySQL
+  ansible.builtin.pip:
+    name: PyMySQL
+
 - name: Install mysql client
   ansible.builtin.dnf:
     name: mysql
